@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt as jose_jwt
+import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from pymongo import MongoClient
@@ -107,13 +107,15 @@ def verify_password(plain: str, hashed: str) -> bool:
 def create_access_token(payload: dict) -> str:
     to_encode = payload.copy()
     to_encode["exp"] = datetime.now(timezone.utc) + timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
-    return jose_jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+    token = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+    return token
 
 
 def _decode_token(token: str) -> dict:
     try:
-        return jose_jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-    except JWTError:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token.")
 
 
