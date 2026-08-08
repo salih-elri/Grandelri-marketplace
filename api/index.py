@@ -12,7 +12,7 @@ import certifi
 from bson import ObjectId
 from bson.errors import InvalidId
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Query, UploadFile, File, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
@@ -709,25 +709,7 @@ def update_my_profile(req: ProfileUpdate, user: dict = Depends(get_current_user)
     return {"message": "Profile updated."}
 
 
-@app.post("/api/users/me/photo", tags=["users"])
-def upload_profile_photo(file: UploadFile = File(...), user: dict = Depends(get_current_user)):
-    """Upload a local profile photo."""
-    db = get_db()
-    oid = ObjectId(user["user_id"])
-    
-    # Save file
-    timestamp = int(datetime.utcnow().timestamp())
-    ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
-    filename = f"user_{user['sub']}_{timestamp}.{ext}"
-    filepath = os.path.join(UPLOADS_DIR, filename)
-    
-    with open(filepath, "wb") as f:
-        f.write(file.file.read())
-        
-    photo_url = f"/uploads/{filename}"
-    
-    db.users.update_one({"_id": oid}, {"$set": {"profile_photo_url": photo_url}})
-    return {"message": "Photo uploaded.", "profile_photo_url": photo_url}
+
 
 
 @app.get("/api/users", tags=["users"])
