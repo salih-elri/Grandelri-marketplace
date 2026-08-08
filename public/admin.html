@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRANDELRI — Admin Panel</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="/index.html" class="nav-logo">
+        <div class="logo-mark">G</div>
+        <div class="logo-text-wrap">
+          <span class="logo-name">GRANDELRI</span>
+          <span class="logo-stars">★★★★★</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/index.html" class="filter-tab">← Back to Store</a></li>
+      </ul>
+      <div class="nav-auth" id="nav-auth"></div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container page-wrapper" style="padding-top: 40px; padding-bottom: 60px;">
+    
+    <div class="section-header">
+      <h1 class="hero-title" style="font-size: 2.4rem; margin-bottom: 0;">Control Panel</h1>
+      <span class="badge badge-admin" style="font-size: 0.9rem; padding: 6px 14px;">Admin Mode</span>
+    </div>
+
+    <div class="admin-grid">
+      <!-- Items Management -->
+      <div class="flex-col gap-4">
+        <div class="admin-panel">
+          <div class="admin-panel-title">
+            <div class="icon">💎</div>
+            Add New Item
+          </div>
+          <form id="add-item-form" class="flex-col gap-3">
+            <div class="form-group">
+              <label class="form-label" for="item-name">Item Name</label>
+              <input type="text" id="item-name" class="form-input" required>
+            </div>
+            
+            <div class="flex gap-3">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label" for="item-category">Category</label>
+                <select id="item-category" class="form-select" required>
+                  <option value="" disabled selected>Select category...</option>
+                  <option value="Vinyls">Vinyls</option>
+                  <option value="Antique Furniture">Antique Furniture</option>
+                  <option value="GPS Sport Watches">GPS Sport Watches</option>
+                  <option value="Running Shoes">Running Shoes</option>
+                  <option value="Camping Tents">Camping Tents</option>
+                </select>
+              </div>
+              <div class="form-group" style="width: 120px;">
+                <label class="form-label" for="item-condition">Condition</label>
+                <select id="item-condition" class="form-select">
+                  <option value="new">New</option>
+                  <option value="used">Used</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <div class="form-group" style="flex:1;">
+                <label class="form-label" for="item-price">Price</label>
+                <input type="number" id="item-price" class="form-input" step="0.01" min="0" required>
+              </div>
+              <div class="form-group" style="width: 90px;">
+                <label class="form-label" for="item-currency">Currency</label>
+                <select id="item-currency" class="form-select">
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="item-seller">Seller Name</label>
+              <input type="text" id="item-seller" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="item-image">Image URL</label>
+              <input type="url" id="item-image" class="form-input" placeholder="https://..." required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="item-desc">Description</label>
+              <textarea id="item-desc" class="form-textarea" style="min-height: 80px;" required></textarea>
+            </div>
+
+            <!-- Dynamic Category Fields -->
+            <div id="field-battery" class="form-group hidden">
+              <label class="form-label" for="item-battery">Battery Life</label>
+              <input type="text" id="item-battery" class="form-input" placeholder="e.g. 28 days">
+            </div>
+            <div id="field-age" class="form-group hidden">
+              <label class="form-label" for="item-age">Age / Year</label>
+              <input type="text" id="item-age" class="form-input" placeholder="e.g. 1973">
+            </div>
+            <div id="field-size" class="form-group hidden">
+              <label class="form-label" for="item-size">Size</label>
+              <input type="text" id="item-size" class="form-input" placeholder="e.g. US 10">
+            </div>
+            <div id="field-material" class="form-group hidden">
+              <label class="form-label" for="item-material">Material</label>
+              <input type="text" id="item-material" class="form-input" placeholder="e.g. Oak">
+            </div>
+
+            <div class="error-msg" id="add-item-error"></div>
+            <button type="submit" class="btn btn-primary" id="btn-add-item">+ Add Item</button>
+          </form>
+        </div>
+
+        <div class="admin-panel" style="overflow-x: auto;">
+          <div class="admin-panel-title justify-between" style="border-bottom: none; padding-bottom: 0;">
+            <div class="flex items-center gap-2">
+              <div class="icon" style="background: rgba(16,185,129,0.1); color: var(--success);">📦</div>
+              Manage Items
+            </div>
+            <span class="text-sm text-secondary" id="items-count">...</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Rating</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="items-tbody">
+              <tr><td colspan="5" style="text-align:center;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users Management -->
+      <div class="flex-col gap-4">
+        <div class="admin-panel">
+          <div class="admin-panel-title">
+            <div class="icon" style="background: rgba(124,58,237,0.1); color: var(--accent-light);">👥</div>
+            Add New User
+          </div>
+          <form id="add-user-form" class="flex-col gap-3">
+            <div class="form-group">
+              <label class="form-label" for="user-username">Username</label>
+              <input type="text" id="user-username" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="user-password">Password</label>
+              <input type="password" id="user-password" class="form-input" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="user-role">Role</label>
+              <select id="user-role" class="form-select">
+                <option value="user">Regular User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="error-msg" id="add-user-error"></div>
+            <button type="submit" class="btn btn-primary" id="btn-add-user">+ Add User</button>
+          </form>
+        </div>
+
+        <div class="admin-panel" style="overflow-x: auto;">
+          <div class="admin-panel-title justify-between" style="border-bottom: none; padding-bottom: 0;">
+            <div class="flex items-center gap-2">
+              <div class="icon" style="background: rgba(245,158,11,0.1); color: var(--warning);">🛡️</div>
+              Manage Users
+            </div>
+            <span class="text-sm text-secondary" id="users-count">...</span>
+          </div>
+          <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width:30%">User</th>
+                  <th style="width:25%">Email</th>
+                  <th style="width:10%">Role</th>
+                  <th style="width:10%">Reviews</th>
+                  <th style="width:15%">Password</th>
+                  <th style="width:10%">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <tr><td colspan="6" style="text-align:center;">Loading users...</td></tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

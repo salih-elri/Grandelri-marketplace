@@ -1,0 +1,130 @@
+﻿--- PAGE 1 ---
+Middle East Technical University Department of Computer Engineering
+CENG 495
+Cloud Computing
+2025-2026 Spring
+Take Home Exam 1
+(Ver. 1.0)
+April 5 2026, Sunday 23:59
+1 Introduction
+For the assignment, your task is to develop an e-commerce web application and deploy it to
+the cloud Platform-as-a-Service (PaaS) Vercel1. You will use the NoSQL2 database MongoDB3
+on the Database-as-a-Service (DBaaS) cloud platform MongoDB Atlas4.
+2 Atlas (MongoDB Platform)
+ÔÇó Create a free account on MongoDB Atlas MongoDB Atlas5.
+ÔÇó Create a new project and deploy a new database. You can find the documentation here6.
+ÔÇó Configure your database to be accessible from any IP address (from the Network Access
+Section), and setup password authorization for DB access (from the Database Access
+section).
+ÔÇó Atlas allows for fine-grained database access controls under the Security Section. You can
+leverage this for your admin user and regular users.
+3 Vercel (App PaaS)
+ÔÇó Login to Vercel using a new or an existing account.
+ÔÇó Review the documentation7 and choose the technology stack to implement the assignment.
+There are no restrictions on which language or stack you can use to implement, but it is
+recommended to use the language or the stack you are familiar with.
+ÔÇó In the documentation, you may notice that Vercel expects a GitHub repo to pull and
+deploy your application from. You should use a private repository for that. If you wish,
+you can make your repository public after the grades are announced.
+1https://vercel.com
+2https://yurichev.org/NoSQL/
+3https://www.mongodb.com/
+4https://www.mongodb.com/atlas
+5https://www.mongodb.com/atlas/database
+6https://www.mongodb.com/docs/
+7https://vercel.com/docs
+1
+
+--- PAGE 2 ---
+4 E-Commerce Application
+You are probably familiar with many examples of e-commerce sites for purchasing products
+like groceries or clothing. However, if you want inspiration for your design, sites using
+Shopify8 platform are common. And if you want inspiration for the architecture for your
+project, examining this project9 may be a good starting point.
+However, the features expected from your e-commerce application is far more limited in scope
+compared to a real e-commerce site, and they can be found in the following sections.
+4.1 Home Page
+This is the start page of your application. It is accessed through index.html. The items
+available for sale should be listed on the homepage with filtering options for the category of
+the items. For the purposes of this homework, at minimum, the following categories of
+items should be for sale;
+ÔÇó Vinyls
+ÔÇó Antique Furniture
+ÔÇó GPS Sport Watches
+ÔÇó Running Shoes
+ÔÇó Camping Tents
+If the current user is not authorized, they are only allowed to browse the items. You should
+offer a way for user authentication on your home page.
+4.2 Admin Capabilities
+When someone logs in as the admin, they should be able to do the following:
+Add Item: Create and insert a new item into the database. See Section 4.4 for the required
+attributes of items.
+Remove Item: Remove an item from the application. By removing the item, you should
+also remove the ratings and the reviews relevant to that item. Any user affected by the
+removal should have their relevant fields updated as well.
+Add User: Create a new user. Refer to Section 4.5 for user attributes.
+Remove User: Remove the user and update relevant items that are effected by this change.
+4.3 Regular User Capabilities
+When a regular user logs in, they should be able to do the following on each itemÔÇÖs page:
+Rate Item: Rate an item on a scale of 1 to 5. The average rating of the item is updated as a
+result. A user can rate an item multiple times, the latter overwriting the prior rating.
+Review Item: Review an item. Reviews can also be updated. When a review is updated,
+ÔÇ£Edit:ÔÇØ string and the new review should be appended to the end of the original review.
+8https://www.shopify.com/
+9https://github.com/venkataravuri/e-commerce-microservices-sample
+2
+
+--- PAGE 3 ---
+4.4 Item Attributes
+The following is the list of attributes for items. When implementing the item details view
+(either a new page or a frame), ensure that every relevant detail of the item is presented to
+the user. Note that not every field is required for every item.
+Name: The name of the item.
+Description: The description of the item.
+Price: The price of the item, choice of currency is left to you.
+Seller: The seller of the item.
+Image: The image showing the item. You do not need to implement image upload, a
+hyperlink to an image file on the Internet is fine.
+Battery Life: Only relevant for GPS sport watches.
+Age: Only relevant for antique furniture and vinyls.
+Size: Only relevant for the running shoes.
+Material: Only relevant for antique furniture and running shoes.
+Rating: Average rating this item has received.
+Reviews: List of the reviews on the item.
+Condition: Whether the item is new or used.
+You are free to add additional attributes as you see fit. For instance, to keep track of the
+average rating, you can also have a number of reviewers.
+4.5 User Attributes
+Create a dedicated page presenting the following details of the currently authenticated
+regular user. If the current user is not logged-in, they should not be able to see this page or
+the way of accessing this page.
+Username: The username of the user
+Average Rating: The average of every rating given by this user
+Reviews: Every review written by this user
+5 Rules and Submission
+ÔÇó This is an exam. Plagiarism will not be tolerated.
+ÔÇó Upload a zip file contains all of your source code to ODTUClass assignment page before
+the deadline.
+ÔÇú The penalty for late submission is (­ØÉı­ØÉ«­ØÉĞ­ØÉø­ØÉŞ­ØÉ½ ­ØÉ¿­ØÉş ­ØÉï­ØÉÜ­ØÉ¡­ØÉŞ ­ØÉâ­ØÉÜ­ØÉ▓­ØÉ¼)­ØşÉ ├ù­Øşô.
+ÔÇú You will get 0 automatically after 3 late days.
+ÔÇó Your submission must include a README file that explains your design decisions and the
+publicly accessible URL of your Vercel deployment. It should include explanations on:
+ÔÇú How to login as a regular user and the admin user and how to use the application
+3
+
+--- PAGE 4 ---
+ÔÇú Rationale behind the choices regarding:
+ÔÇô The selected programming language and frameworks
+ÔÇô The general architecture of the application
+ÔÇú And other points as you would like to mention
+ÔÇó Populate your application by adding at least 8 items and 3 users. Have your users rate and
+review every item at least once. Make sure at least one item from every category is
+available in the application.
+ÔÇó Since we are using a NoSQL database which allows for dynamic schemas, you are expected
+to take advantage of this flexibility, for example, by designing your database with the
+fewest collections possible.
+ÔÇó We may request live demo sessions for randomly selected submissions and submissions we
+deem necessary. Details regarding how and when the session will take place will be
+announced later on ODTUClass page.
+4
+

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRANDELRI — Premium Marketplace</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="/index.html" class="nav-logo">
+        <div class="logo-mark">G</div>
+        <div class="logo-text-wrap">
+          <span class="logo-name">GRANDELRI</span>
+          <span class="logo-stars">★★★★★</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#" class="filter-tab active" data-category="">All Items</a></li>
+        <li><a href="#" class="filter-tab" data-category="Vinyls">Vinyls</a></li>
+        <li><a href="#" class="filter-tab" data-category="Antique Furniture">Antiques</a></li>
+        <li><a href="#" class="filter-tab" data-category="GPS Sport Watches">Watches</a></li>
+      </ul>
+      <div class="nav-auth" id="nav-auth"></div>
+    </div>
+  </nav>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Welcome</h2>
+        <button class="modal-close" id="modal-close">×</button>
+      </div>
+      
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Sign In</button>
+        <button class="auth-tab" data-tab="signup">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form-wrap">
+        <form id="login-form" class="modal-form">
+          <div class="form-group">
+            <label class="form-label" for="login-username">Username</label>
+            <input type="text" id="login-username" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-input" required>
+          </div>
+          <div class="error-msg" id="login-error"></div>
+          <div style="text-align: right; margin-top: 8px; margin-bottom: 8px;">
+            <a href="#" onclick="switchAuthTab('forgot'); return false;" class="text-sm" style="color: var(--text-muted);">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg mt-4 w-full">Sign In</button>
+        </form>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="signup-form-wrap" class="hidden">
+        <form id="signup-form" class="modal-form">
+          <div class="form-group">
+            <label class="form-label" for="signup-username">Username</label>
+            <input type="text" id="signup-username" class="form-input" required minlength="3">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email</label>
+            <input type="email" id="signup-email" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password</label>
+            <input type="password" id="signup-password" class="form-input" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signup-confirm">Confirm Password</label>
+            <input type="password" id="signup-confirm" class="form-input" required minlength="6">
+          </div>
+          <div class="error-msg" id="signup-error"></div>
+          <button type="submit" class="btn btn-primary btn-lg mt-4 w-full">Create Account</button>
+        </form>
+      </div>
+
+      <!-- Forgot Password Form -->
+      <div id="forgot-form-wrap" class="hidden">
+        <p style="margin-bottom: 16px; font-size: 0.9rem; color: var(--text-secondary);">Enter your email address and we'll send you a link to reset your password.</p>
+        <form id="forgot-form" class="modal-form">
+          <div class="form-group">
+            <label class="form-label" for="forgot-email">Email</label>
+            <input type="email" id="forgot-email" class="form-input" required>
+          </div>
+          <div class="error-msg" id="forgot-error" style="color: var(--success);"></div>
+          <button type="submit" class="btn btn-primary btn-lg mt-4 w-full">Send Reset Link</button>
+          <div style="text-align: center; margin-top: 16px;">
+            <a href="#" onclick="switchAuthTab('login'); return false;" class="text-sm" style="color: var(--text-muted);">Back to Sign In</a>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero container">
+    <div class="hero-logo">
+      <img src="/grandelri_logo.jpg" alt="GRANDELRI Logo" style="border-radius:20px;">
+    </div>
+    <div class="hero-eyebrow">Premium Marketplace</div>
+    <h1 class="hero-title">Discover <span class="gradient-text">Exceptional</span> Items</h1>
+    <p class="hero-subtitle">Curated selection of vintage vinyls, antique furniture, and premium gear.</p>
+    
+    <!-- Search Bar -->
+    <div class="search-wrapper">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <div style="position: relative; flex: 1; display: flex; align-items: center;">
+          <input type="text" id="search-ghost" class="search-input search-ghost" disabled>
+          <input type="text" id="search-input" class="search-input" placeholder="Search for items, brands, or categories..." autocomplete="off">
+        </div>
+        <button class="search-clear" id="search-clear">×</button>
+      </div>
+      <div class="search-dropdown" id="search-dropdown"></div>
+    </div>
+
+    <div id="hero-cta"></div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container page-wrapper">
+    <div class="section-header">
+      <h2 class="section-title">Explore Collection</h2>
+      <span class="text-sm text-secondary font-bold" id="item-count">Loading...</span>
+    </div>
+
+    <!-- Mobile Filters (Hidden on Desktop) -->
+    <div class="filter-tabs" style="margin-bottom: 24px;" id="mobile-filters">
+      <!-- Populated by JS on mobile if needed -->
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="product-grid"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-logo">GRANDELRI</div>
+      <div class="footer-stars">★★★★★</div>
+      <p class="footer-copy">© 2026 Grandelri Premium Marketplace. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+</html>

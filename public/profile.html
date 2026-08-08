@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRANDELRI — Profile</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="/index.html" class="nav-logo">
+        <div class="logo-mark">G</div>
+        <div class="logo-text-wrap">
+          <span class="logo-name">GRANDELRI</span>
+          <span class="logo-stars">★★★★★</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/index.html" class="filter-tab">← Back to Collection</a></li>
+      </ul>
+      <div class="nav-auth" id="nav-auth"></div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container page-wrapper" style="padding-top: 40px; padding-bottom: 60px;">
+    
+    <div id="profile-loading" class="empty-state">
+      <div class="skeleton skeleton-line skeleton-line-lg" style="height:140px; border-radius:28px;"></div>
+    </div>
+
+    <div id="profile-content" class="hidden">
+      <!-- Profile Header -->
+      <div id="profile-header" class="profile-header"></div>
+      
+      <!-- Edit Profile Form (Initially hidden, toggled via JS) -->
+      <div id="profile-edit-section" class="hidden profile-edit-card">
+        <h3 class="section-title" style="margin-bottom: 20px; font-size: 1.2rem;">Edit Profile</h3>
+        <form id="profile-edit-form">
+          <div style="text-align: center;">
+             <img id="edit-photo-preview" class="profile-photo-preview" src="" alt="Avatar" onerror="this.style.display='none'">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-photo-file">Profile Photo</label>
+            <input type="file" id="edit-photo-file" accept="image/*" class="form-input">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label" for="edit-display-name">Display Name</label>
+            <input type="text" id="edit-display-name" class="form-input">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label" for="edit-bio">Bio</label>
+            <textarea id="edit-bio" class="form-textarea" placeholder="Tell us about yourself..."></textarea>
+          </div>
+          <div class="error-msg" id="edit-error"></div>
+          <div class="flex gap-3" style="justify-content: flex-end;">
+            <button type="button" class="btn btn-ghost" id="btn-cancel-edit">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-profile">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="gold-divider">
+        <span class="gold-divider-icon">✦</span>
+      </div>
+
+      <!-- Reviews -->
+      <div class="section-header">
+        <h2 class="section-title">Your Reviews</h2>
+        <span class="text-sm text-secondary font-bold" id="review-count">Loading...</span>
+      </div>
+
+      <div id="profile-empty" class="empty-state hidden">
+        <div class="empty-icon">📝</div>
+        <p class="empty-title">No reviews yet</p>
+        <p class="empty-desc">When you review items, they will appear here.</p>
+        <a href="/index.html" class="btn btn-primary mt-4">Start Exploring</a>
+      </div>
+
+      <div class="reviews-grid" id="profile-reviews" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-logo">GRANDELRI</div>
+      <div class="footer-stars">★★★★★</div>
+      <p class="footer-copy">© 2026 Grandelri Premium Marketplace. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>
