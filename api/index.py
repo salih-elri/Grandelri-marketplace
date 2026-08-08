@@ -369,7 +369,9 @@ def forgot_password(req: ForgotPasswordRequest, request: Request):
             print(f"\n[+] Real Reset Email successfully sent to {req.email} via {smtp_server}\n")
         except Exception as e:
             print(f"\n[-] Failed to send real email to {req.email}. Error: {e}\n")
+            raise HTTPException(status_code=500, detail=f"Failed to send email. Error: {str(e)}")
     else:
+        raise HTTPException(status_code=500, detail="SMTP credentials are not configured on the server.")
         print("\n" + "="*50)
         print(f"[SIMULATED EMAIL TO]: {req.email}")
         print("="*50)
