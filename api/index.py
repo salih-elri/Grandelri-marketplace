@@ -48,6 +48,11 @@ VALID_CATEGORIES = [
 
 app = FastAPI(title="Grandleri E-Commerce API", version="2.0.0")
 
+@app.get("/api/ping")
+def ping_pong(request: Request):
+    return {"path": request.scope.get("path")}
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
