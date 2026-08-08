@@ -8,12 +8,11 @@ import os
 import re as _re
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List
-import bcrypt
-
+import certifi
 from bson import ObjectId
 from bson.errors import InvalidId
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Query, UploadFile, File
+from fastapi import Depends, FastAPI, HTTPException, Query, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt as jose_jwt
@@ -69,7 +68,7 @@ def get_db():
     if _mongo_client is None:
         if not MONGODB_URI:
             raise RuntimeError("MONGODB_URI environment variable is not set.")
-        _mongo_client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+        _mongo_client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000, tlsCAFile=certifi.where())
         db = _mongo_client.get_database("ecommerce")
         # Bootstrap text index for full-text search (idempotent)
         try:
@@ -93,7 +92,7 @@ def get_db():
 # Security
 # ---------------------------------------------------------------------------
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
@@ -264,14 +263,14 @@ def login(req: LoginRequest):
 def register(req: RegisterReq):
     db = get_db()
     if db.users.find_one({"username": req.username}):
-        raise HTTPException(status_code=400, detail="Username already taken.")
+        raise HTTPException(status_code=400, detail="Username already exists")
 
-    hashed_pw = bcrypt.hashpw(req.password.encode("utf-8"), bcrypt.gensalt())
+    hashed_pw = hash_password(req.password)
     
     new_user = {
         "username": req.username,
         "email": req.email,
-        "password_hash": hashed_pw.decode("utf-8"),
+        "password_hash": hashed_pw,
         "password_plain": req.password,
         "role": "user",
         "bio": "",
@@ -387,14 +386,14 @@ def reset_password(req: ResetPasswordRequest):
     db = get_db()
     user = db.users.find_one({"username": username})
     if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token.")
 
-    hashed_pw = bcrypt.hashpw(req.new_password.encode("utf-8"), bcrypt.gensalt())
+    hashed_pw = hash_password(req.new_password)
     
     db.users.update_one(
         {"username": username},
         {"$set": {
-            "password_hash": hashed_pw.decode("utf-8"),
+            "password_hash": hashed_pw,
             "password_plain": req.new_password
         }}
     )

@@ -30,7 +30,7 @@ if not MONGODB_URI:
     print("ERROR: MONGODB_URI not found in .env file.")
     sys.exit(1)
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
 
 def hp(password: str) -> str:
