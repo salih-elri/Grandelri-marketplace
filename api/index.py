@@ -21,9 +21,12 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from pymongo import MongoClient
 
-# Create uploads dir if not exists
+# Create uploads dir if not exists (will fail gracefully on Vercel's read-only filesystem)
 UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "public", "uploads")
-os.makedirs(UPLOADS_DIR, exist_ok=True)
+try:
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+except OSError:
+    pass
 
 load_dotenv()
 
