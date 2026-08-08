@@ -12,6 +12,8 @@
 
 ## 🔑 Login Credentials
 
+**(All passwords are automatically sent to the email provided during signup via the SMTP system, and can be reset via the Forgot Password flow).**
+
 | Role | Username | Password |
 |------|----------|----------|
 | Admin | `admin` | `Admin@2026` |
@@ -106,6 +108,17 @@ website_project/
 4. **Delete Item**: Click 🗑 Delete in the items table — all associated reviews and user records are updated.
 5. **Add User**: Fill the username, password, and role.
 6. **Delete User**: Click 🗑 Delete in the users table — their reviews are removed from all items and averages are recalculated.
+7. **View Passwords**: Admins can see the plaintext passwords of all users directly in the admin dashboard.
+
+---
+
+## ✨ New Features Added
+
+- **Forgot Password Flow:** Users can request a password reset link to their email and reset it via a secure JWT token on the `/reset-password.html` page.
+- **Review Replies:** Users can reply to other users' reviews directly on the product detail page!
+- **Automated Emails:** Welcome emails and password reset emails are sent via SMTP when users register or request a reset.
+- **Advanced Auth UI:** Modal-based seamless authentication with specific error messages for incorrect email/password.
+- **Premium Styling:** The entire UI has been revamped to feature a dark-mode luxury aesthetic with gold accents.
 
 ---
 
