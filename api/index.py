@@ -30,7 +30,7 @@ except OSError:
 
 load_dotenv()
 
-MONGODB_URI: str = os.getenv("MONGODB_URI", "")
+MONGODB_URI: str = os.getenv("MONGODB_URI") or os.getenv("MONGO_URI", "")
 JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "dev-secret-change-me")
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 24
