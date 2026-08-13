@@ -131,7 +131,7 @@ function renderStars(container, value = 0, interactive = false, onChange = null)
 }
 
 // ── Navigation ─────────────────────────────────────────────────
-function renderNav() {
+async function renderNav() {
   const nav = document.getElementById('nav-auth');
   if (!nav) return;
   const user = getUser();
@@ -151,36 +151,43 @@ function renderNav() {
       : initial;
 
     nav.innerHTML = `
-      <div style="display: flex; gap: 15px; align-items: center;">
-        <a href="#" id="nav-favorites-btn" style="color: var(--text-primary); font-size: 1.2rem;" title="Favorites">❤️</a>
-        <a href="#" id="nav-cart-btn" style="color: var(--text-primary); font-size: 1.2rem;" title="Cart">🛒</a>
+      <div style="display: flex; gap: 20px; align-items: center;">
         
-        <div class="settings-dropdown-wrapper" style="position: relative; display: inline-block;">
-          <div class="nav-avatar" id="settings-toggle" style="cursor: pointer;">${avatarHtml}</div>
-          <div class="settings-dropdown-content" style="display: none; position: absolute; right: 0; background-color: var(--bg-card); min-width: 160px; box-shadow: var(--shadow-card); z-index: 1; border-radius: var(--radius-sm); border: 1px solid var(--border); overflow: hidden; margin-top: 5px;">
+        <!-- Favorites Dropdown -->
+        <div class="hover-dropdown-wrapper" id="nav-fav-wrapper">
+          <a href="#" style="color: var(--gold); font-size: 1.2rem; text-decoration: none;" title="Favorites">💛</a>
+          <div class="hover-dropdown-content" id="nav-fav-dropdown">
+            <div class="dropdown-empty">Loading favorites...</div>
+          </div>
+        </div>
+        
+        <!-- Cart Dropdown -->
+        <div class="hover-dropdown-wrapper" id="nav-cart-wrapper">
+          <a href="#" style="color: var(--text-primary); font-size: 1.2rem; text-decoration: none;" title="Cart">🛒</a>
+          <div class="hover-dropdown-content" id="nav-cart-dropdown">
+            <div class="dropdown-empty">Loading cart...</div>
+          </div>
+        </div>
+        
+        <!-- Profile Link -->
+        <a href="/profile.html" class="nav-avatar" style="text-decoration: none; cursor: pointer; border: 2px solid var(--border);" title="Profile">${avatarHtml}</a>
+        
+        <!-- Settings Dropdown -->
+        <div class="hover-dropdown-wrapper" id="nav-settings-wrapper">
+          <a href="/settings.html" style="color: var(--text-primary); font-size: 1.2rem; text-decoration: none;" title="Settings">⚙️</a>
+          <div class="hover-dropdown-content">
             <div style="padding: 10px 15px; border-bottom: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem;">
                 Hi, <b>${user.username}</b>
             </div>
-            <a href="/profile.html" style="color: var(--text-primary); padding: 12px 16px; text-decoration: none; display: block;">👤 Profile</a>
-            ${user.role === 'admin' ? `<a href="/admin.html" style="color: var(--text-primary); padding: 12px 16px; text-decoration: none; display: block;">⚙️ Admin</a>` : ''}
-            <a href="/settings.html" style="color: var(--text-primary); padding: 12px 16px; text-decoration: none; display: block;">🔧 Settings</a>
-            <a href="#" id="btn-logout" style="color: var(--danger); padding: 12px 16px; text-decoration: none; display: block; border-top: 1px solid var(--border);">Sign Out</a>
+            <a href="/profile.html" class="dropdown-item">👤 Profile</a>
+            ${user.role === 'admin' ? `<a href="/admin.html" class="dropdown-item">🛡️ Admin</a>` : ''}
+            <a href="/security.html" class="dropdown-item">🔒 Security</a>
+            <a href="#" id="btn-logout" class="dropdown-item dropdown-item-danger" style="border-top: 1px solid var(--border);">🚪 Sign Out</a>
           </div>
         </div>
+
       </div>
     `;
-
-    // Dropdown hover logic
-    const wrapper = nav.querySelector('.settings-dropdown-wrapper');
-    const content = nav.querySelector('.settings-dropdown-content');
-    wrapper.addEventListener('mouseenter', () => content.style.display = 'block');
-    wrapper.addEventListener('mouseleave', () => content.style.display = 'none');
-    
-    // Dropdown click logic
-    const toggle = document.getElementById('settings-toggle');
-    toggle.addEventListener('click', () => {
-        window.location.href = '/settings.html';
-    });
 
     document.getElementById('btn-logout')?.addEventListener('click', (e) => {
       e.preventDefault();
@@ -188,6 +195,64 @@ function renderNav() {
       showToast('Signed out successfully.', 'info');
       setTimeout(() => window.location.reload(), 600);
     });
+    
+    // Fetch user data to populate cart and favorites
+    try {
+        const userData = await api.get('/users/me');
+        
+        // Populate Favorites
+        const favDropdown = document.getElementById('nav-fav-dropdown');
+        if (userData.favorites && userData.favorites.length > 0) {
+            favDropdown.innerHTML = '';
+            for (const itemId of userData.favorites) {
+                try {
+                    const item = await api.get('/items/' + itemId);
+                    favDropdown.innerHTML += `
+                        <a href="/item.html?id=${item._id}" class="dropdown-product">
+                            <img src="${item.image_url || 'https://placehold.co/40x40/12122a/7c3aed?text=No+Image'}" alt="${item.name}">
+                            <div class="dropdown-product-info">
+                                <span class="dropdown-product-name">${item.name}</span>
+                                <span class="dropdown-product-price">${new Intl.NumberFormat('en-US', { style: 'currency', currency: item.currency || 'USD' }).format(item.price)}</span>
+                            </div>
+                        </a>
+                    `;
+                } catch(e) {}
+            }
+        } else {
+            favDropdown.innerHTML = `<div class="dropdown-empty">Your favorites list is empty.</div>`;
+        }
+        
+        // Populate Cart
+        const cartDropdown = document.getElementById('nav-cart-dropdown');
+        if (userData.cart && userData.cart.length > 0) {
+            cartDropdown.innerHTML = '';
+            for (const itemId of userData.cart) {
+                try {
+                    const item = await api.get('/items/' + itemId);
+                    cartDropdown.innerHTML += `
+                        <a href="/item.html?id=${item._id}" class="dropdown-product">
+                            <img src="${item.image_url || 'https://placehold.co/40x40/12122a/7c3aed?text=No+Image'}" alt="${item.name}">
+                            <div class="dropdown-product-info">
+                                <span class="dropdown-product-name">${item.name}</span>
+                                <span class="dropdown-product-price">${new Intl.NumberFormat('en-US', { style: 'currency', currency: item.currency || 'USD' }).format(item.price)}</span>
+                            </div>
+                        </a>
+                    `;
+                } catch(e) {}
+            }
+            // Add checkout button to cart
+            cartDropdown.innerHTML += `
+                <div style="padding: 10px;">
+                    <a href="#" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Checkout</a>
+                </div>
+            `;
+        } else {
+            cartDropdown.innerHTML = `<div class="dropdown-empty">Your cart is empty.</div>`;
+        }
+        
+    } catch (err) {
+        console.error("Could not fetch user cart/favorites", err);
+    }
   }
 }
 
