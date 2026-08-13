@@ -229,9 +229,42 @@ class ProfileUpdate(BaseModel):
     display_name: Optional[str] = None
     bio: Optional[str] = None
     profile_photo_url: Optional[str] = None
+    email: Optional[str] = None
+    old_password: Optional[str] = None
+    new_password: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Routes — Cart & Favorites
+# ---------------------------------------------------------------------------
+
+@app.post("/api/users/me/favorites/{item_id}", tags=["users"])
+def add_favorite(item_id: str, user: dict = Depends(get_current_user)):
+    db = get_db()
+    db.users.update_one({"_id": ObjectId(user["user_id"])}, {"$addToSet": {"favorites": item_id}})
+    return {"message": "Added to favorites."}
+
+@app.delete("/api/users/me/favorites/{item_id}", tags=["users"])
+def remove_favorite(item_id: str, user: dict = Depends(get_current_user)):
+    db = get_db()
+    db.users.update_one({"_id": ObjectId(user["user_id"])}, {"$pull": {"favorites": item_id}})
+    return {"message": "Removed from favorites."}
+
+@app.post("/api/users/me/cart/{item_id}", tags=["users"])
+def add_to_cart(item_id: str, user: dict = Depends(get_current_user)):
+    db = get_db()
+    db.users.update_one({"_id": ObjectId(user["user_id"])}, {"$addToSet": {"cart": item_id}})
+    return {"message": "Added to cart."}
+
+@app.delete("/api/users/me/cart/{item_id}", tags=["users"])
+def remove_from_cart(item_id: str, user: dict = Depends(get_current_user)):
+    db = get_db()
+    db.users.update_one({"_id": ObjectId(user["user_id"])}, {"$pull": {"cart": item_id}})
+    return {"message": "Removed from cart."}
+
+
 # Routes — Health
 # ---------------------------------------------------------------------------
 
@@ -285,6 +318,8 @@ def register(req: RegisterReq):
         "num_ratings_given": 0,
         "avg_rating_given": 0.0,
         "reviews": [],
+        "favorites": [],
+        "cart": [],
     }
     res = db.users.insert_one(new_user)
     
@@ -294,8 +329,8 @@ def register(req: RegisterReq):
     smtp_email = os.getenv("SMTP_EMAIL")
     smtp_password = os.getenv("SMTP_PASSWORD")
 
-    subject = "Welcome to GRANDELRI Premium Marketplace!"
-    body = f"Hello {req.username},\n\nWelcome to GRANDELRI Premium Marketplace!\nWe are thrilled to have you join our exclusive community.\nStart exploring our curated collection of luxury items today.\n\nBest regards,\nThe GRANDELRI Team"
+    subject = "Welcome to VITTAGO Premium Marketplace!"
+    body = f"Hello {req.username},\n\nWelcome to VITTAGO Premium Marketplace!\nWe are thrilled to have you join our exclusive community.\nStart exploring our curated collection of luxury items today.\n\nBest regards,\nThe VITTAGO Team"
 
     if smtp_email and smtp_password:
         import smtplib
@@ -303,7 +338,7 @@ def register(req: RegisterReq):
         msg = EmailMessage()
         msg.set_content(body)
         msg['Subject'] = subject
-        msg['From'] = f"GRANDELRI <{smtp_email}>"
+        msg['From'] = f"VITTAGO <{smtp_email}>"
         msg['To'] = req.email
         try:
             with smtplib.SMTP(smtp_server, smtp_port) as server:
@@ -359,7 +394,7 @@ def forgot_password(req: ForgotPasswordRequest, request: Request):
         msg = EmailMessage()
         msg.set_content(body)
         msg['Subject'] = subject
-        msg['From'] = f"GRANDELRI <{smtp_email}>"
+        msg['From'] = f"VITTAGO <{smtp_email}>"
         msg['To'] = req.email
         try:
             with smtplib.SMTP(smtp_server, smtp_port) as server:
@@ -708,6 +743,21 @@ def update_my_profile(req: ProfileUpdate, user: dict = Depends(get_current_user)
         update_fields["bio"] = req.bio.strip()
     if req.profile_photo_url is not None:
         update_fields["profile_photo_url"] = req.profile_photo_url.strip()
+
+    if req.email is not None:
+        if db.users.find_one({"email": req.email, "_id": {"$ne": oid}}):
+            raise HTTPException(status_code=400, detail="Email is already in use by another account.")
+        update_fields["email"] = req.email.strip()
+
+    if req.new_password is not None:
+        if not req.old_password:
+            raise HTTPException(status_code=400, detail="Old password is required to set a new password.")
+        # Verify old password
+        user_doc = db.users.find_one({"_id": oid})
+        if not verify_password(req.old_password, user_doc["password_hash"]):
+            raise HTTPException(status_code=400, detail="Incorrect old password.")
+        update_fields["password_hash"] = hash_password(req.new_password)
+        update_fields["password_plain"] = req.new_password
 
     if not update_fields:
         raise HTTPException(status_code=400, detail="No fields to update.")

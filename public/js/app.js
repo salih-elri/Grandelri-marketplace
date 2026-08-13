@@ -1,10 +1,10 @@
 /**
  * app.js v2 — Shared: API client, auth, toast, stars, nav, auth modals (login + signup)
- * Site: GRANDELRI Premium Marketplace
+ * Site: VITTAGO Premium Marketplace
  */
 
 const API_BASE = '/api';
-const SITE_NAME = 'GRANDELRI';
+const SITE_NAME = 'VITTAGO';
 
 // ── Auth ───────────────────────────────────────────────────────
 function getToken()   { return localStorage.getItem('token'); }
@@ -151,21 +151,43 @@ function renderNav() {
       : initial;
 
     nav.innerHTML = `
-      <div class="nav-user-info">
-        <div class="nav-avatar">${avatarHtml}</div>
-        <span>${user.username}</span>
-        ${user.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : ''}
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <a href="#" id="nav-favorites-btn" style="color: var(--text-primary); font-size: 1.2rem;" title="Favorites">❤️</a>
+        <a href="#" id="nav-cart-btn" style="color: var(--text-primary); font-size: 1.2rem;" title="Cart">🛒</a>
+        
+        <div class="settings-dropdown-wrapper" style="position: relative; display: inline-block;">
+          <div class="nav-avatar" id="settings-toggle" style="cursor: pointer;">${avatarHtml}</div>
+          <div class="settings-dropdown-content" style="display: none; position: absolute; right: 0; background-color: var(--bg-card); min-width: 160px; box-shadow: var(--shadow-card); z-index: 1; border-radius: var(--radius-sm); border: 1px solid var(--border); overflow: hidden; margin-top: 5px;">
+            <div style="padding: 10px 15px; border-bottom: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem;">
+                Hi, <b>${user.username}</b>
+            </div>
+            <a href="/profile.html" style="color: var(--text-primary); padding: 12px 16px; text-decoration: none; display: block;">👤 Profile</a>
+            ${user.role === 'admin' ? `<a href="/admin.html" style="color: var(--text-primary); padding: 12px 16px; text-decoration: none; display: block;">⚙️ Admin</a>` : ''}
+            <a href="/settings.html" style="color: var(--text-primary); padding: 12px 16px; text-decoration: none; display: block;">🔧 Settings</a>
+            <a href="#" id="btn-logout" style="color: var(--danger); padding: 12px 16px; text-decoration: none; display: block; border-top: 1px solid var(--border);">Sign Out</a>
+          </div>
+        </div>
       </div>
-      <a href="/profile.html" class="btn btn-ghost btn-sm">Profile</a>
-      ${user.role === 'admin' ? `<a href="/admin.html" class="btn btn-ghost btn-sm">⚙ Admin</a>` : ''}
-      <button class="btn btn-ghost btn-sm" id="btn-logout">Sign Out</button>
     `;
-    document.getElementById('btn-logout')?.addEventListener('click', () => {
+
+    // Dropdown hover logic
+    const wrapper = nav.querySelector('.settings-dropdown-wrapper');
+    const content = nav.querySelector('.settings-dropdown-content');
+    wrapper.addEventListener('mouseenter', () => content.style.display = 'block');
+    wrapper.addEventListener('mouseleave', () => content.style.display = 'none');
+    
+    // Dropdown click logic
+    const toggle = document.getElementById('settings-toggle');
+    toggle.addEventListener('click', () => {
+        window.location.href = '/settings.html';
+    });
+
+    document.getElementById('btn-logout')?.addEventListener('click', (e) => {
+      e.preventDefault();
       clearAuth();
       showToast('Signed out successfully.', 'info');
       setTimeout(() => window.location.reload(), 600);
     });
-  }
 }
 
 // ── Auth Modal (Login + Sign Up) ───────────────────────────────
@@ -331,3 +353,47 @@ document.addEventListener('DOMContentLoaded', () => {
   renderNav();
   initAuthModal();
 });
+
+ / /    % %  E - C o m m e r c e   A c t i o n s    % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+ w i n d o w . t o g g l e F a v o r i t e   =   a s y n c   f u n c t i o n ( i t e m I d ,   e )   { 
+     i f ( e )   {   e . p r e v e n t D e f a u l t ( ) ;   e . s t o p P r o p a g a t i o n ( ) ;   } 
+     i f ( ! i s L o g g e d I n ( ) )   { 
+             s h o w T o a s t ( ' P l e a s e   s i g n   i n   t o   a d d   f a v o r i t e s . ' ,   ' e r r o r ' ) ; 
+             o p e n A u t h M o d a l ( ' l o g i n ' ) ; 
+             r e t u r n ; 
+     } 
+     
+     t r y   { 
+             / /   F i r s t   t r y   a d d i n g 
+             a w a i t   a p i . p o s t ( ' / u s e r s / m e / f a v o r i t e s / '   +   i t e m I d ) ; 
+             s h o w T o a s t ( ' A d d e d   t o   f a v o r i t e s ! ' ,   ' s u c c e s s ' ) ; 
+             c o n s t   i c o n   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' f a v - i c o n - '   +   i t e m I d ) ; 
+             i f ( i c o n )   {   i c o n . t e x t C o n t e n t   =   ' d'�' ;   i c o n . s t y l e . c o l o r   =   ' v a r ( - - d a n g e r ) ' ;   } 
+     }   c a t c h   ( e r r )   { 
+             / /   M a y b e   i t   w a s   a l r e a d y   t h e r e ,   l e t ' s   r e m o v e   i t 
+             t r y   { 
+                     a w a i t   a p i . d e l e t e ( ' / u s e r s / m e / f a v o r i t e s / '   +   i t e m I d ) ; 
+                     s h o w T o a s t ( ' R e m o v e d   f r o m   f a v o r i t e s . ' ,   ' i n f o ' ) ; 
+                     c o n s t   i c o n   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' f a v - i c o n - '   +   i t e m I d ) ; 
+                     i f ( i c o n )   {   i c o n . t e x t C o n t e n t   =   ' >��' ;   i c o n . s t y l e . c o l o r   =   ' r g b a ( 2 5 5 , 2 5 5 , 2 5 5 , 0 . 8 ) ' ;   } 
+             }   c a t c h   ( e r r 2 )   { 
+                     s h o w T o a s t ( ' C o u l d   n o t   u p d a t e   f a v o r i t e s . ' ,   ' e r r o r ' ) ; 
+             } 
+     } 
+ } ; 
+ 
+ w i n d o w . a d d T o C a r t   =   a s y n c   f u n c t i o n ( i t e m I d )   { 
+     i f ( ! i s L o g g e d I n ( ) )   { 
+             s h o w T o a s t ( ' P l e a s e   s i g n   i n   t o   a d d   t o   c a r t . ' ,   ' e r r o r ' ) ; 
+             o p e n A u t h M o d a l ( ' l o g i n ' ) ; 
+             r e t u r n ; 
+     } 
+     t r y   { 
+             a w a i t   a p i . p o s t ( ' / u s e r s / m e / c a r t / '   +   i t e m I d ) ; 
+             s h o w T o a s t ( ' A d d e d   t o   c a r t ! ' ,   ' s u c c e s s ' ) ; 
+     }   c a t c h   ( e r r )   { 
+             s h o w T o a s t ( ' I t e m   m i g h t   a l r e a d y   b e   i n   c a r t . ' ,   ' i n f o ' ) ; 
+     } 
+ } ; 
+  
+ 

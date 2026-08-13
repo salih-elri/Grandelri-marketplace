@@ -1,5 +1,5 @@
 /**
- * admin.js — Admin panel logic (GRANDELRI)
+ * admin.js — Admin panel logic (VITTAGO)
  */
 
 if (!isLoggedIn() || !isAdmin()) {

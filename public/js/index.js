@@ -1,5 +1,5 @@
 /**
- * index.js — Home page logic (GRANDELRI)
+ * index.js — Home page logic (VITTAGO)
  * Fetches items, renders product grid, handles category filter & search.
  */
 
@@ -21,7 +21,10 @@ function renderProductCard(item) {
   const condLabel = item.condition === 'new' ? 'New' : 'Used';
 
   card.innerHTML = `
-    <div class="product-card-image">
+    <div class="product-card-image" style="position: relative;">
+      <button onclick="toggleFavorite('${item._id}', event)" class="favorite-btn" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 1.1rem;" aria-label="Add to favorites">
+        <span class="favorite-icon" id="fav-icon-${item._id}" style="color: rgba(255,255,255,0.8);">🤍</span>
+      </button>
       <img
         src="${item.image_url || 'https://placehold.co/400x300/12122a/7c3aed?text=No+Image'}"
         alt="${item.name}"
@@ -156,7 +159,7 @@ function renderHeroCta() {
     const user = getUser();
     cta.innerHTML = `
       <p class="text-secondary" style="font-size:0.95rem;">
-        Welcome back to <strong style="color:var(--gold)">GRANDELRI</strong>, <strong>${user.username}</strong>!
+        Welcome back to <strong style="color:var(--gold)">VITTAGO</strong>, <strong>${user.username}</strong>!
       </p>
     `;
   }

@@ -1,5 +1,5 @@
 /**
- * profile.js — Profile page logic (GRANDELRI)
+ * profile.js — Profile page logic (VITTAGO)
  */
 
 if (!isLoggedIn()) {
