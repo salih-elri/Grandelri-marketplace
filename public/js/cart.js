@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div>
                 <h2 style="color: var(--text-primary);">Total: <span style="color: var(--gold);">${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total)}</span></h2>
             </div>
-            <button class="btn btn-primary" onclick="showToast('Checkout functionality coming soon!', 'info')">Proceed to Checkout</button>
+            <button class="btn btn-primary" onclick="window.location.href='/checkout.html'">Proceed to Checkout</button>
         `;
         container.appendChild(summary);
 

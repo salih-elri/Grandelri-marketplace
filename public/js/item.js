@@ -63,7 +63,7 @@ async function loadItem() {
           
           <div style="display: flex; gap: 10px; margin-bottom: 24px;">
             <button class="btn btn-primary" onclick="addToCart('${item._id}')" style="flex: 1;">🛒 Add to Cart</button>
-            <button class="btn btn-purple" onclick="addToCart('${item._id}'); window.location.href='/cart.html';" style="flex: 1;">Buy Now</button>
+            <button class="btn btn-purple" onclick="addToCart('${item._id}'); window.location.href='/checkout.html';" style="flex: 1;">Buy Now</button>
             <button class="btn btn-ghost" onclick="toggleFavorite('${item._id}', event)" title="Add to Favorites" style="padding: 10px 15px; font-size: 1.2rem;">
               <span id="fav-icon-${item._id}">🤍</span>
             </button>

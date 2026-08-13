@@ -243,7 +243,7 @@ async function renderNav() {
             // Add checkout button to cart
             cartDropdown.innerHTML += `
                 <div style="padding: 10px;">
-                    <a href="/cart.html" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Checkout</a>
+                    <a href="/checkout.html" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Checkout</a>
                 </div>
             `;
         } else {
