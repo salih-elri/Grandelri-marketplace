@@ -354,46 +354,85 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuthModal();
 });
 
- / /    % %  E - C o m m e r c e   A c t i o n s    % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
- w i n d o w . t o g g l e F a v o r i t e   =   a s y n c   f u n c t i o n ( i t e m I d ,   e )   { 
-     i f ( e )   {   e . p r e v e n t D e f a u l t ( ) ;   e . s t o p P r o p a g a t i o n ( ) ;   } 
-     i f ( ! i s L o g g e d I n ( ) )   { 
-             s h o w T o a s t ( ' P l e a s e   s i g n   i n   t o   a d d   f a v o r i t e s . ' ,   ' e r r o r ' ) ; 
-             o p e n A u t h M o d a l ( ' l o g i n ' ) ; 
-             r e t u r n ; 
-     } 
-     
-     t r y   { 
-             / /   F i r s t   t r y   a d d i n g 
-             a w a i t   a p i . p o s t ( ' / u s e r s / m e / f a v o r i t e s / '   +   i t e m I d ) ; 
-             s h o w T o a s t ( ' A d d e d   t o   f a v o r i t e s ! ' ,   ' s u c c e s s ' ) ; 
-             c o n s t   i c o n   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' f a v - i c o n - '   +   i t e m I d ) ; 
-             i f ( i c o n )   {   i c o n . t e x t C o n t e n t   =   ' d'�' ;   i c o n . s t y l e . c o l o r   =   ' v a r ( - - d a n g e r ) ' ;   } 
-     }   c a t c h   ( e r r )   { 
-             / /   M a y b e   i t   w a s   a l r e a d y   t h e r e ,   l e t ' s   r e m o v e   i t 
-             t r y   { 
-                     a w a i t   a p i . d e l e t e ( ' / u s e r s / m e / f a v o r i t e s / '   +   i t e m I d ) ; 
-                     s h o w T o a s t ( ' R e m o v e d   f r o m   f a v o r i t e s . ' ,   ' i n f o ' ) ; 
-                     c o n s t   i c o n   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' f a v - i c o n - '   +   i t e m I d ) ; 
-                     i f ( i c o n )   {   i c o n . t e x t C o n t e n t   =   ' >��' ;   i c o n . s t y l e . c o l o r   =   ' r g b a ( 2 5 5 , 2 5 5 , 2 5 5 , 0 . 8 ) ' ;   } 
-             }   c a t c h   ( e r r 2 )   { 
-                     s h o w T o a s t ( ' C o u l d   n o t   u p d a t e   f a v o r i t e s . ' ,   ' e r r o r ' ) ; 
-             } 
-     } 
- } ; 
- 
- w i n d o w . a d d T o C a r t   =   a s y n c   f u n c t i o n ( i t e m I d )   { 
-     i f ( ! i s L o g g e d I n ( ) )   { 
-             s h o w T o a s t ( ' P l e a s e   s i g n   i n   t o   a d d   t o   c a r t . ' ,   ' e r r o r ' ) ; 
-             o p e n A u t h M o d a l ( ' l o g i n ' ) ; 
-             r e t u r n ; 
-     } 
-     t r y   { 
-             a w a i t   a p i . p o s t ( ' / u s e r s / m e / c a r t / '   +   i t e m I d ) ; 
-             s h o w T o a s t ( ' A d d e d   t o   c a r t ! ' ,   ' s u c c e s s ' ) ; 
-     }   c a t c h   ( e r r )   { 
-             s h o w T o a s t ( ' I t e m   m i g h t   a l r e a d y   b e   i n   c a r t . ' ,   ' i n f o ' ) ; 
-     } 
- } ; 
-  
- 
+// %% E-Commerce Actions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+window.toggleFavorite = async function(itemId, e) {
+  if(e) { e.preventDefault(); e.stopPropagation(); }
+  if(!isLoggedIn()) {
+      showToast('Please sign in to add favorites.', 'error');
+      openAuthModal('login');
+      return;
+  }
+  
+  try {
+      // First try adding
+      await api.post('/users/me/favorites/' + itemId);
+      showToast('Added to favorites!', 'success');
+      const icon = document.getElementById('fav-icon-' + itemId);
+      if(icon) { icon.textContent = 'd'�'; icon.style.color = 'var(--danger)'; }
+  } catch (err) {
+      // Maybe it was already there, let's remove it
+      try {
+          await api.delete('/users/me/favorites/' + itemId);
+          showToast('Removed from favorites.', 'info');
+          const icon = document.getElementById('fav-icon-' + itemId);
+          if(icon) { icon.textContent = '>��'; icon.style.color = 'rgba(255,255,255,0.8)'; }
+      } catch (err2) {
+          showToast('Could not update favorites.', 'error');
+      }
+  }
+};
+
+window.addToCart = async function(itemId) {
+  if(!isLoggedIn()) {
+      showToast('Please sign in to add to cart.', 'error');
+      openAuthModal('login');
+      return;
+  }
+  try {
+      await api.post('/users/me/cart/' + itemId);
+      showToast('Added to cart!', 'success');
+  } catch (err) {
+      showToast('Item might already be in cart.', 'info');
+  }
+};
+
+
+// ── E-Commerce Actions ──────────────────────────────────────────
+window.toggleFavorite = async function(itemId, e) {
+  if(e) { e.preventDefault(); e.stopPropagation(); }
+  if(!isLoggedIn()) {
+      showToast('Please sign in to add favorites.', 'error');
+      openAuthModal('login');
+      return;
+  }
+  
+  try {
+      await api.post('/users/me/favorites/' + itemId);
+      showToast('Added to favorites!', 'success');
+      const icon = document.getElementById('fav-icon-' + itemId);
+      if(icon) { icon.textContent = '❤️'; icon.style.color = 'var(--danger)'; }
+  } catch (err) {
+      try {
+          await api.delete('/users/me/favorites/' + itemId);
+          showToast('Removed from favorites.', 'info');
+          const icon = document.getElementById('fav-icon-' + itemId);
+          if(icon) { icon.textContent = '🤍'; icon.style.color = 'rgba(255,255,255,0.8)'; }
+      } catch (err2) {
+          showToast('Could not update favorites.', 'error');
+      }
+  }
+};
+
+window.addToCart = async function(itemId) {
+  if(!isLoggedIn()) {
+      showToast('Please sign in to add to cart.', 'error');
+      openAuthModal('login');
+      return;
+  }
+  try {
+      await api.post('/users/me/cart/' + itemId);
+      showToast('Added to cart!', 'success');
+  } catch (err) {
+      showToast('Item might already be in cart.', 'info');
+  }
+};
