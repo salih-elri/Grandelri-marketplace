@@ -228,7 +228,7 @@ function initSearch() {
         const results = await api.get(`/items/search?q=${encodeURIComponent(val)}`);
         renderSearchSuggestions(results, val);
       } catch (err) {
-        dropdown.innerHTML = `<div class="search-no-results" style="color:var(--danger)">Error: ${err.message}</div>`;
+        dropdown.innerHTML = `<div class="search-no-results" style="color:var(--gold)">Error: ${err.message}</div>`;
         dropdown.classList.add('open');
       }
     }, 300);

@@ -197,7 +197,7 @@ function renderReviews(reviews, itemName) {
 
       const updatedBadge = r.updated ? '<span class="review-updated-badge">Edited</span>' : '';
       const avatar = r.username.charAt(0).toUpperCase();
-      const hiddenBadge = r.hidden ? '<span class="badge" style="background:rgba(244,63,94,0.1);color:var(--danger);border:1px solid rgba(244,63,94,0.2);">Hidden</span>' : '';
+      const hiddenBadge = r.hidden ? '<span class="badge" style="background:rgba(244,63,94,0.1);color:var(--gold);border:1px solid rgba(244,63,94,0.2);">Hidden</span>' : '';
 
       html += `
         <div class="review-card" id="review-card-${r.username}" ${isMine ? 'style="border-color:var(--gold-dark);"' : ''} ${r.hidden ? 'style="opacity:0.6;"' : ''}>

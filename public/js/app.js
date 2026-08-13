@@ -155,7 +155,7 @@ async function renderNav() {
         
         <!-- Favorites Dropdown -->
         <div class="hover-dropdown-wrapper" id="nav-fav-wrapper">
-          <a href="#" style="color: var(--gold); font-size: 1.2rem; text-decoration: none;" title="Favorites">💛</a>
+          <a href="/favorites.html" style="color: var(--gold); font-size: 1.2rem; text-decoration: none;" title="Favorites">💛</a>
           <div class="hover-dropdown-content" id="nav-fav-dropdown">
             <div class="dropdown-empty">Loading favorites...</div>
           </div>
@@ -163,7 +163,7 @@ async function renderNav() {
         
         <!-- Cart Dropdown -->
         <div class="hover-dropdown-wrapper" id="nav-cart-wrapper">
-          <a href="#" style="color: var(--text-primary); font-size: 1.2rem; text-decoration: none;" title="Cart">🛒</a>
+          <a href="/cart.html" style="color: var(--text-primary); font-size: 1.2rem; text-decoration: none;" title="Cart">🛒</a>
           <div class="hover-dropdown-content" id="nav-cart-dropdown">
             <div class="dropdown-empty">Loading cart...</div>
           </div>
@@ -243,7 +243,7 @@ async function renderNav() {
             // Add checkout button to cart
             cartDropdown.innerHTML += `
                 <div style="padding: 10px;">
-                    <a href="#" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Checkout</a>
+                    <a href="/cart.html" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Checkout</a>
                 </div>
             `;
         } else {
@@ -433,13 +433,15 @@ window.toggleFavorite = async function(itemId, e) {
       await api.post('/users/me/favorites/' + itemId);
       showToast('Added to favorites!', 'success');
       const icon = document.getElementById('fav-icon-' + itemId);
-      if(icon) { icon.textContent = '❤️'; icon.style.color = 'var(--danger)'; }
+      if(icon) { icon.textContent = '💛'; icon.style.color = 'var(--gold)'; }
+      renderNav();
   } catch (err) {
       try {
           await api.delete('/users/me/favorites/' + itemId);
           showToast('Removed from favorites.', 'info');
           const icon = document.getElementById('fav-icon-' + itemId);
           if(icon) { icon.textContent = '🤍'; icon.style.color = 'rgba(255,255,255,0.8)'; }
+          renderNav();
       } catch (err2) {
           showToast('Could not update favorites.', 'error');
       }
@@ -455,6 +457,7 @@ window.addToCart = async function(itemId) {
   try {
       await api.post('/users/me/cart/' + itemId);
       showToast('Added to cart!', 'success');
+      renderNav();
   } catch (err) {
       showToast('Item might already be in cart.', 'info');
   }

@@ -1303,7 +1303,7 @@ footer {
   position: absolute;
   top: 100%;
   right: -10px;
-  background-color: var(--bg-card);
+  background-color: var(--bg-secondary);
   min-width: 220px;
   max-height: 400px;
   overflow-y: auto;
