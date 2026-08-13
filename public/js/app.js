@@ -354,49 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuthModal();
 });
 
-// %% E-Commerce Actions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-window.toggleFavorite = async function(itemId, e) {
-  if(e) { e.preventDefault(); e.stopPropagation(); }
-  if(!isLoggedIn()) {
-      showToast('Please sign in to add favorites.', 'error');
-      openAuthModal('login');
-      return;
-  }
-  
-  try {
-      // First try adding
-      await api.post('/users/me/favorites/' + itemId);
-      showToast('Added to favorites!', 'success');
-      const icon = document.getElementById('fav-icon-' + itemId);
-      if(icon) { icon.textContent = 'd'�'; icon.style.color = 'var(--danger)'; }
-  } catch (err) {
-      // Maybe it was already there, let's remove it
-      try {
-          await api.delete('/users/me/favorites/' + itemId);
-          showToast('Removed from favorites.', 'info');
-          const icon = document.getElementById('fav-icon-' + itemId);
-          if(icon) { icon.textContent = '>��'; icon.style.color = 'rgba(255,255,255,0.8)'; }
-      } catch (err2) {
-          showToast('Could not update favorites.', 'error');
-      }
-  }
-};
-
-window.addToCart = async function(itemId) {
-  if(!isLoggedIn()) {
-      showToast('Please sign in to add to cart.', 'error');
-      openAuthModal('login');
-      return;
-  }
-  try {
-      await api.post('/users/me/cart/' + itemId);
-      showToast('Added to cart!', 'success');
-  } catch (err) {
-      showToast('Item might already be in cart.', 'info');
-  }
-};
-
-
 // ── E-Commerce Actions ──────────────────────────────────────────
 window.toggleFavorite = async function(itemId, e) {
   if(e) { e.preventDefault(); e.stopPropagation(); }
