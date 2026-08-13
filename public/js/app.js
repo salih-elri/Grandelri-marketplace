@@ -188,6 +188,7 @@ function renderNav() {
       showToast('Signed out successfully.', 'info');
       setTimeout(() => window.location.reload(), 600);
     });
+  }
 }
 
 // ── Auth Modal (Login + Sign Up) ───────────────────────────────
